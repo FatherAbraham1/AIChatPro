@@ -1,7 +1,7 @@
 README
 ======
 
-## [FooChatBot](https://bitbucket.org/ynov/foochatbot/)
+## [aichatpro](https://bitbucket.org/gmochid2/aichatpro/)
 
 Instalasi + Run
 ===============
@@ -15,15 +15,15 @@ lama).
 
 Cara clone yaitu:
 
-    git clone https://bitbucket.org/ynov/foochatbot.git
+    git clone https://bitbucket.org/gmochid2/aichatpro.git
 
-Setelah clone/download, buka project `foochatbot` dengan netbeans, lalu run.
-Secara default aplikasi akan listen di socket port 8765. Buka
-http://localhost:8765/
+Setelah clone/download, buka project `aichatpro` dengan netbeans, lalu run.
+Secara default aplikasi akan listen di socket port 8777. Buka
+http://localhost:8777/
 
 Untuk menghasilkan jar, tinggal `Clean & Build` lewat netbeans, jar file ada di
 direktori dist/. Untuk menjalankan aplikasi di port berbeda, jalankan `java -jar
-dist/foochatbot.jar <port_number>`.
+dist/aichatpro.jar <port_number>`.
 
 Penjelasan Singkat
 ==================
@@ -33,7 +33,7 @@ menggunakan [Spark][spark] sebagai web-framework. Spark meringankan beberapa
 pekerjaan seperti routing url, penangangan http request dan http response.
 
 File-file yang berada pada direktori `static/` merupakan file static file yang
-dibaca oleh aplikasi (menggunakan fungsi yang ada pada `FooFile`) dan dikirimkan
+dibaca oleh aplikasi (menggunakan fungsi yang ada pada `chatFile`) dan dikirimkan
 langsung lewat http response. Misal, ada client request dengan url
 /static/html/hello.html, maka konten dari hello.html itu dikirimkan ke client.
 Aturan routing untuk static-file adalah `/static/<dir>/<file>`.
@@ -46,10 +46,10 @@ sehingga menjadi sebuah tampilan.
 
 Pada contoh kali ini, routing ke root "`/`" aplikasi akan merespon sebuah
 static-file html yaitu "hello.html". Pada hello.html, ada sebuah form berisi
-sebuah text-input, yang jika di-submit akan melakukan AJAX-request (POST) ke /foo
-dengan parameter `foo = <value dari text-input>`. Pada aplikasi, fungsi routing
-ke "`/foo`" dengan request method POST, akan mengembalikan respon berupa
-kebalikan dari parameter `foo` yang diberikan. Respon tersebut jika diterima
+sebuah text-input, yang jika di-submit akan melakukan AJAX-request (POST) ke /chat
+dengan parameter `chat = <value dari text-input>`. Pada aplikasi, fungsi routing
+ke "`/chat`" dengan request method POST, akan mengembalikan respon berupa
+kebalikan dari parameter `chat` yang diberikan. Respon tersebut jika diterima
 akan ditangani oleh hello.html menggunakan javascript, sehingga kebalikan dari
 text-input tersebut ditampilkan.
 
@@ -67,6 +67,6 @@ Library yang Digunakan
 [msysgit]: http://code.google.com/p/msysgit/downloads/detail?name=msysGit-fullinstall-1.8.0-preview20121022.exe&can=2&q=
 [jetty]: http://www.eclipse.org/jetty/
 [spark]: http://www.sparkjava.com/
-[zip]: https://bitbucket.org/ynov/foochatbot/get/master.zip
+[zip]: https://bitbucket.org/gmochid2/aichatpro/get/master.zip
 [bootstrap]: http://twitter.github.com/bootstrap/
 [jquery]: http://jquery.com/
