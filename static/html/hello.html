@@ -76,7 +76,7 @@ $('#form').submit(function(event) {
   $('#ajax-response').css('display', 'none');
   $.post('/chat', { chat: $('#chat-input').val() }, function(data) {
     $('#ajax-response').fadeIn('fast');
-    $('#ajax-response > span').html('Kebalikan: ' + data);
+    $('#ajax-response > span').html(data);
   });
 })
 </script>

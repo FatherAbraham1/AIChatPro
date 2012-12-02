@@ -32,7 +32,7 @@ public class BM implements Searchable {
             }
             if(skip == 0) return i;
         }
-        return m;
+        return -1;
     }
 
     private int[] mRight; // menyatakan banyak karakter yang akan diskip

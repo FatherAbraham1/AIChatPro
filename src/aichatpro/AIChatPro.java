@@ -1,6 +1,7 @@
 package aichatpro;
 
 import aichatpro.helper.FileHelper;
+import aichatpro.model.Dictionary;
 import java.io.*;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
@@ -25,19 +26,17 @@ public class AIChatPro {
         });
 
         // Test ajax
-        // Reverse string foo
+        // Reverse string chat
         post(new Route("/chat") {
            @Override
            public Object handle(Request req, Response res) {
                String chat = req.queryParams("chat");
 
-               StringBuilder str = new StringBuilder();
-               for (int i = chat.length() - 1; i >= 0; i--) {
-                  str.append(chat.charAt(i));
-               }
+               Dictionary dict = new Dictionary(Dictionary.KNUTH_MORRIS_PRATT);
+               dict.readFAQFromFile("D:/test.txt");
 
                res.type("text/plain");
-               return str;
+               return dict.answer(chat);
            }
         });
 

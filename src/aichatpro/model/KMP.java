@@ -29,11 +29,18 @@ public class KMP implements Searchable {
             j = mDFA[s.charAt(i)][j];
         }
         if(j == n)  return i - n;
-        return m;
+        return -1;
     }
 
     private String mPattern; // pattern dasar
     private int[][] mDFA; // finite automata
 
     private static final int lim = 256; // limit integer string yang dipakai
+
+    public static void main(String[] args) {
+        KMP s = new KMP();
+        s.setup("aaaaa");
+        System.out.println(s.search("aaaaaaaaa"));
+        System.out.println(s.mPattern);
+    }
 }
