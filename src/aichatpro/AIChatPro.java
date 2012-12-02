@@ -1,5 +1,6 @@
 package aichatpro;
 
+import aichatpro.helper.FileHelper;
 import java.io.*;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
