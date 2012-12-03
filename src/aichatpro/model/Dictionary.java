@@ -24,6 +24,10 @@ public class Dictionary {
         mType = type;
     }
 
+    /**
+     * Membaca daftar sinonim dari sebuah file
+     * @param filename path ke file yang berisi daftar sinonim
+     */
     public void readSynonymFromFile(String filename) {
         mSynonym = new HashMap<String, String>();
         Scanner sc = null;
@@ -33,9 +37,10 @@ public class Dictionary {
             Logger.getLogger(Dictionary.class.getName()).log(Level.SEVERE, null, ex);
         }
         while(sc.hasNext()) {
-            String question = sc.next().toLowerCase();
-            String answer = sc.next().toLowerCase();
-            mSynonym.put(question, answer);
+            String a = sc.next().toLowerCase();
+            String b = sc.next().toLowerCase();
+            mSynonym.put(a, b);
+            mSynonym.put(b, a);
         }
     }
 
@@ -90,7 +95,7 @@ public class Dictionary {
             String s;
             for (int i = 0; i < half / 2; i++) {
                 s = input.substring(i, input.length() - i);
-                System.out.println(s);
+                //System.out.println(s);
                 Searchable sb = (mType == KNUTH_MORRIS_PRATT) ? new KMP() : new BM();
                 sb.setup(s);
                 mQuestion.add(sb);
@@ -98,13 +103,13 @@ public class Dictionary {
 
             for (int i = 0; i < half; i++) {
                 s = input.substring(0, input.length() - i);
-                System.out.println(s);
+                //System.out.println(s);
                 Searchable sb = (mType == KNUTH_MORRIS_PRATT) ? new KMP() : new BM();
                 sb.setup(s);
                 mQuestion.add(sb);
 
                 s = input.substring(i, input.length());
-                System.out.println(s);
+                //System.out.println(s);
                 sb = (mType == KNUTH_MORRIS_PRATT) ? new KMP() : new BM();
                 sb.setup(s);
                 mQuestion.add(sb);
@@ -115,7 +120,7 @@ public class Dictionary {
     /**
      * Membuat semua kemungkinan pertanyaan dari daftar sinonim yang diberikan
      * @param input input dari user
-     * @return
+     * @return daftar kemungkinan lain pertanyaan dari user
      */
     private ArrayList<String> generateSysnonymQuestion(String input) {
         ArrayList<String> ret = new ArrayList<String>();

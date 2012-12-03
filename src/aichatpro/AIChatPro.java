@@ -10,71 +10,66 @@ import static spark.Spark.*;
 
 public class AIChatPro {
     public static void main(String[] args) {
-        /*if (args.length > 0) {
-            port = Integer.parseInt(args[1]);
-        }*/
-
         setPort(port);
 
         // Index
         get(new Route("/") {
             @Override
-            public Object handle(Request req, Response res) {
-                res.type("text/html");
+            public Object handle(Request request, Response response) {
+                response.type("text/html");
                 return FileHelper.ReadFile("static/html/hello.html");
             }
         });
 
-        // Test ajax
-        // Reverse string chat
+        // ajax chat
+        // controller to processing chat input from user
         post(new Route("/chat") {
            @Override
-           public Object handle(Request req, Response res) {
-               String chat = req.queryParams("chat");
+           public Object handle(Request request, Response response) {
+               String chat = request.queryParams("chat");
 
                Dictionary dict = new Dictionary(Dictionary.KNUTH_MORRIS_PRATT);
                dict.readFAQFromFile("D:/test.txt");
 
-               res.type("text/plain");
+               response.type("text/plain");
                return dict.answer(chat);
            }
         });
 
         // Static file handler
-        // Get static text files (css/js) and or binary files
+        // Mengambil file text static atau binary file
         get(new Route("/static/:dir/:filename") {
            @Override
-           public Object handle(Request req, Response res) {
+           public Object handle(Request request, Response response) {
                 String filename = String.format("static/%s/%s",
-                    req.params(":dir"), req.params(":filename"));
+                    request.params(":dir"), request.params(":filename"));
 
-                // binary file
-                if (req.params(":dir").equals("img")) {
+                // untuk file binary
+                if (request.params(":dir").equals("img")) {
                     byte bytes[] = FileHelper.ReadFileBinary(filename);
                     if (bytes == null) {
                         return null;
                     }
 
-                    HttpServletResponse rawRes = res.raw();
+                    HttpServletResponse rawRes = response.raw();
                     try {
                         ServletOutputStream out = rawRes.getOutputStream();
                         out.write(bytes, 0, bytes.length);
-                    } catch (IOException ex) {
-
+                    } catch (Exception ex) {
                     }
 
                     return rawRes;
                 }
 
-                if (req.params(":dir").equals("css")) {
-                    res.type("text/css");
+                if (request.params(":dir").equals("js")) {
+                    response.type("application/javascript");
                 }
 
-                if (req.params(":dir").equals("js")) {
-                    res.type("application/javascript");
+                if (request.params(":dir").equals("css")) {
+                    response.type("text/css");
                 }
 
-               // else, non-binary:
+               // untuk bukan binary
                return FileHelper.ReadFile(filename);
            }
         });
