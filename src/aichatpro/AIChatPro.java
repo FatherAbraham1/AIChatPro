@@ -29,6 +29,7 @@ public class AIChatPro {
                String chat = request.queryParams("chat");
 
                Dictionary dict = new Dictionary(Dictionary.KNUTH_MORRIS_PRATT);
+               dict.readSynonymFromFile("D:/synonym.txt");
                dict.readFAQFromFile("D:/test.txt");
 
                response.type("text/plain");

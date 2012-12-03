@@ -73,15 +73,15 @@ public class Dictionary {
     public String answer(String input) {
         input = input.toLowerCase();
 
-        mQuestion = new ArrayList<Searchable>();
-        ArrayList<String> candidate = generateSysnonymQuestion(input);
-        generateQuestionCandidate(candidate);
+        generateQuestionCandidate(input);
 
-        for (String key : mQA.keySet())
-            for (Searchable sb : mQuestion)
-                if(sb.search(key) != -1)
-                    return mQA.get(key);
-        return "Apakah yang anda maksud";
+        String ret = searchOnFAQ();
+        if(ret == null) {
+            ArrayList<String> syn = generateSysnonymQuestion(input);
+            generateQuestionCandidate(syn);
+        }
+        
+        return ret;
     }
 
     /**
@@ -90,6 +90,7 @@ public class Dictionary {
      * @param candidate daftar kandidat kemungkinan pertanyaan user
      */
     private void generateQuestionCandidate(ArrayList<String> candidate) {
+        mQuestion = new ArrayList<Searchable>();
         for(String input : candidate) {
             int half = input.length() / 2;
             String s;
@@ -114,6 +115,33 @@ public class Dictionary {
                 sb.setup(s);
                 mQuestion.add(sb);
             }
+        }
+    }
+
+    private void generateQuestionCandidate(String input) {
+        mQuestion = new ArrayList<Searchable>();
+        int half = input.length() / 2;
+        String s;
+        for (int i = 0; i < half / 2; i++) {
+            s = input.substring(i, input.length() - i);
+            //System.out.println(s);
+            Searchable sb = (mType == KNUTH_MORRIS_PRATT) ? new KMP() : new BM();
+            sb.setup(s);
+            mQuestion.add(sb);
+        }
+
+        for (int i = 0; i < half; i++) {
+            s = input.substring(0, input.length() - i);
+            //System.out.println(s);
+            Searchable sb = (mType == KNUTH_MORRIS_PRATT) ? new KMP() : new BM();
+            sb.setup(s);
+            mQuestion.add(sb);
+
+            s = input.substring(i, input.length());
+            //System.out.println(s);
+            sb = (mType == KNUTH_MORRIS_PRATT) ? new KMP() : new BM();
+            sb.setup(s);
+            mQuestion.add(sb);
         }
     }
 
@@ -149,6 +177,14 @@ public class Dictionary {
         }
         
         return ret;
+    }
+
+    private String searchOnFAQ() {
+        for (String key : mQA.keySet())
+            for (Searchable sb : mQuestion)
+                if(sb.search(key) != -1)
+                    return mQA.get(key);
+        return null;
     }
 
     private ArrayList<Searchable> mQuestion;
