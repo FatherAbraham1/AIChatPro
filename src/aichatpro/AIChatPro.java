@@ -28,15 +28,36 @@ public class AIChatPro {
            @Override
            public Object handle(Request request, Response response) {
                String chat = request.queryParams("chat");
+               String s = "AIChatPRO:<br>";
+
+               response.type("text/plain");
 
                Dictionary dict = new Dictionary(Dictionary.KNUTH_MORRIS_PRATT);
                dict.readSynonymFromFile("D:/synonym.txt");
                dict.readFAQFromFile("D:/test.txt");
                dict.readStopwordsFromFile("D:/stopwords.txt");
+               if(temp.contains(chat)) {
+                   return s.concat(dict.justAnswer(chat));
+               }
                ArrayList<String> answer = dict.answer(chat);
-
-               response.type("text/plain");
-               return null;
+               ArrayList<Integer> conf = dict.getConfidence();
+               System.out.println(answer.size());
+               if(answer.size() == 1) {
+                   return s.concat(answer.get(0) + " (" + conf.get(0).toString() + "%)");
+               }
+               if(answer.isEmpty()) {
+                   return s.concat("Kami tidak tahu apa yang ada tanyakan");
+               }
+               temp = answer;
+               s = s.concat("Apakah yang anda maksud?");
+               for(int i = 0; i < answer.size(); i++) {
+                   if(answer.get(i) != null) {
+                       s = s.concat("<br>");
+                       s = s.concat(answer.get(i));
+                       s = s.concat(" (" + conf.get(i).toString() + "%)");
+                   }
+               }
+               return s;
            }
         });
 
@@ -80,4 +101,5 @@ public class AIChatPro {
     }
 
     private static int port = 8777;
+    private static ArrayList<String> temp = new ArrayList<String>();
 }

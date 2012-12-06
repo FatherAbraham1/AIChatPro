@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-import sun.misc.Sort;
 
 /**
  *
@@ -18,7 +17,6 @@ public class Dictionary {
      * @param type tipe algoritma yang akan dipakai dalam proses string matching
      */
     public Dictionary(int type) {
-        mQuestion = new ArrayList<Searchable>();
         mQA = new HashMap<String, String>();
         mSynonym = new HashMap<String, String>();
         mStopWords = new ArrayList<String>();
@@ -68,16 +66,15 @@ public class Dictionary {
      * @param filename nama file yang berisi stopwords
      */
     public void readStopwordsFromFile(String filename) {
-        mQA = new HashMap<String, String>();
+        mStopWords = new ArrayList<String>();
         Scanner sc = null;
         try {
             sc = new Scanner(new FileInputStream(new File(filename)));
         } catch (FileNotFoundException ex) {
         }
         while(sc.hasNext()) {
-            String question = sc.nextLine().toLowerCase();
-            String answer = sc.nextLine();
-            mQA.put(question, answer);
+            String stopword = sc.nextLine().toLowerCase();
+            mStopWords.add(stopword);
         }
     }
 
@@ -87,6 +84,11 @@ public class Dictionary {
      * @return string input yang telah dihilangkan stopwords
      */
     public String removeStopWords(String input) {
+        for(String s: mStopWords) {
+            CharSequence cs = new StringBuffer(s);
+            input = input.replace(cs, "");
+        }
+        input = input.replace("  ", " ");
         return input;
     }
 
@@ -114,8 +116,13 @@ public class Dictionary {
                         s = s.concat(" " + x);
                     }
                 } else {
-                    for(String s : question)
+                    int size = question.size();
+                    for(int i = 0; i < size; i++) {
+                        String s = question.get(i);
                         s = s.concat(" " + x);
+                        question.remove(i);
+                        question.add(i, s);
+                    }
                 }
             }
         }
@@ -144,42 +151,39 @@ public class Dictionary {
 
     private ArrayList<String> generateQuestionMatch(ArrayList<Searchable> questionCandidate) {
         ArrayList<String> matchFAQ = new ArrayList<String>();
-        ArrayList<Integer> confidence = new ArrayList<Integer>();
+        confidence = new ArrayList<Integer>();
 
         // komputasi tiap kandidat dengan FAQ
         for(String qFAQ: mQA.keySet()) {
             for(Searchable S: questionCandidate) {
                 if(S.search(qFAQ) != -1) { // match
+                    Double d = (double) S.getPattern().length() / (double) qFAQ.length() * (double) 100;
                     matchFAQ.add(qFAQ);
-                    Double d = (double) S.getPattern().length() / (double) qFAQ.length();
                     confidence.add(d.intValue());
                 }
             }
         }
-
-        // cari 3 teratas,kemiripan bila ada kemiripan
-        String[] matchFAQs = (String[]) matchFAQ.toArray();
-        Integer[] confidenceS = (Integer[]) confidence.toArray();
         
+        // cari 3 teratas,kemiripan bila ada kemiripan
         for(int i = 0; i < matchFAQ.size(); i++) {
             int imin = i;
             for (int j = i + 1; j < matchFAQ.size(); j++) {
-                if(confidenceS[imin] < confidenceS[j]) {
+                if(confidence.get(imin) < confidence.get(j)) {
                     imin = j;
                 }
             }
-            String temp = matchFAQs[imin];
-            Integer temp2 = confidenceS[imin];
-            matchFAQs[imin] = matchFAQs[i];
-            confidenceS[imin] = confidenceS[i];
-            matchFAQs[i] = temp;
-            confidenceS[i] = temp2;
+            String temp = matchFAQ.get(imin);
+            Integer temp2 = confidence.get(imin);
+            matchFAQ.set(imin, matchFAQ.get(i));
+            confidence.set(imin, confidence.get(i));
+            matchFAQ.set(imin, temp);
+            confidence.set(imin, temp2);
         }
         if(matchFAQ.size() > 3) {
             ArrayList<String> ret = new ArrayList<String>();
-            ret.add(matchFAQs[0]);
-            ret.add(matchFAQs[1]);
-            ret.add(matchFAQs[2]);
+            ret.add(matchFAQ.get(0));
+            ret.add(matchFAQ.get(1));
+            ret.add(matchFAQ.get(2));
         }
         return matchFAQ;
     }
@@ -195,15 +199,63 @@ public class Dictionary {
         input = removeStopWords(input);
         ArrayList<Searchable> questionCandidate = generateSearchable(
                 generateQuestionCandidateFromSynonym(input));
-        ArrayList<String> ans = generateQuestionMatch(questionCandidate); // berat
+        ArrayList<String> q = generateQuestionMatch(questionCandidate); // berat
+
+        ArrayList<String> ans = new ArrayList<String>();
+        if(q.size() == 1) {
+            if(confidence.get(0) < 90) {
+                ans.add(q.get(0));
+                ans.add(null);
+                ans.add(null);
+            } else {
+                ans.add(mQA.get(q.get(0)));
+            }
+        } else if(q.size() == 2) {
+            if(((confidence.get(0) >= 90) && (confidence.get(1) >= 90)) ||
+                    ((confidence.get(0) < 90) && (confidence.get(1) < 90))){
+                ans.add(q.get(0));
+                ans.add(q.get(1));
+                ans.add(null);
+            } else  {
+                ans.add(mQA.get(q.get(0)));
+            }
+        } else if(q.size() == 3) {
+            if(((confidence.get(0) >= 90) && (confidence.get(1) >= 90) && (confidence.get(2) >= 90)) ||
+                    ((confidence.get(0) < 90) && (confidence.get(1) < 90) && (confidence.get(2) < 90))){
+                ans.add(q.get(0));
+                ans.add(q.get(1));
+                ans.add(q.get(2));
+            } else if((confidence.get(0) >= 90) && (confidence.get(1) >= 90) && (confidence.get(2) < 90)){
+                ans.add(q.get(0));
+                ans.add(q.get(1));
+                ans.add(null);
+            } else { //((confidence.get(0) >= 90) && (confidence.get(1) < 90) && (confidence.get(2) < 90))
+                ans.add(mQA.get(q.get(0)));
+            }
+        }
         return ans;
     }
 
-    private ArrayList<Searchable> mQuestion;
+    public String justAnswer(String input) {
+        return mQA.get(input);
+    }
+
+    public ArrayList<Integer> getConfidence() {
+        return confidence;
+    }
+
+    public static void main(String[] args) {
+        Dictionary dict = new Dictionary(BOOYER_MOORE);
+        dict.readStopwordsFromFile("D:/stopwords.txt");
+        System.out.println(dict.removeStopWords("apakah itu dia"));
+    }
+
     private HashMap<String, String> mQA;
     private HashMap<String, String> mSynonym;
+    private ArrayList<Integer> confidence;
     private ArrayList<String> mStopWords;
     private int mType;
+    private int sure;
 
     public static final int KNUTH_MORRIS_PRATT = 0;
     public static final int BOOYER_MOORE = 1;
