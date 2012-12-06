@@ -43,4 +43,9 @@ public class KMP implements Searchable {
         System.out.println(s.search("aaaaaaaaa"));
         System.out.println(s.mPattern);
     }
+
+    @Override
+    public String getPattern() {
+        return mPattern;
+    }
 }

@@ -15,4 +15,10 @@ public interface Searchable {
      * mencari text s dari pattern yang telah diberikan
      */
     public int search(String s);
+
+    /**
+     * Mengambil pattern yang dimasukkan elalui setup
+     * @return
+     */
+    public String getPattern();
 }

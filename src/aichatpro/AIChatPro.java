@@ -1,5 +1,6 @@
 package aichatpro;
 
+import java.util.ArrayList;
 import aichatpro.helper.FileHelper;
 import aichatpro.model.Dictionary;
 import java.io.*;
@@ -31,9 +32,11 @@ public class AIChatPro {
                Dictionary dict = new Dictionary(Dictionary.KNUTH_MORRIS_PRATT);
                dict.readSynonymFromFile("D:/synonym.txt");
                dict.readFAQFromFile("D:/test.txt");
+               dict.readStopwordsFromFile("D:/stopwords.txt");
+               ArrayList<String> answer = dict.answer(chat);
 
                response.type("text/plain");
-               return dict.answer(chat);
+               return null;
            }
         });
 

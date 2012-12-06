@@ -39,4 +39,9 @@ public class BM implements Searchable {
     private String mPattern; //string pattern
 
     private static final int lim = 256; // limit integer string yang dipakai
+
+    @Override
+    public String getPattern() {
+        return mPattern;
+    }
 }
