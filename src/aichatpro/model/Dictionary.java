@@ -149,6 +149,12 @@ public class Dictionary {
         return ret;
     }
 
+    /**
+     * Memilih kandidat pertanyaan yang bersesuaian dengan FAQ yang ada
+     * @param questionCandidate kandidat pertanyaan beserta semua sinonimnya
+     * @return pertanyaan yang bersesuaian dengan FAQ terurut dari yang
+     * paling tinggi kesesuaiannya (max 3)
+     */
     private ArrayList<String> generateQuestionMatch(ArrayList<Searchable> questionCandidate) {
         ArrayList<String> matchFAQ = new ArrayList<String>();
         confidence = new ArrayList<Integer>();
@@ -236,12 +242,21 @@ public class Dictionary {
         return ans;
     }
 
+    /**
+     * Cari pada FAQ, pertanyaan yang bersesuaian
+     * @param input input dijamin ada pada FAQ
+     * @return jawaban berdasarkan FAQ
+     */
     public String justAnswer(String input) {
         return mQA.get(input);
     }
 
-    public ArrayList<Integer> getConfidence() {
-        return confidence;
+    /**
+     * Mengembalikan persentase keyakinan dari urutan match FAQ ke i
+     * @return persentase keyakinan dari urutan match FAQ ke i
+     */
+    public Integer getConfidence(Integer i) {
+        return confidence.get(i);
     }
 
     public static void main(String[] args) {

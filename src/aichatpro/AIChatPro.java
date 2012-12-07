@@ -33,22 +33,27 @@ public class AIChatPro {
                response.type("text/plain");
 
                Dictionary dict;
+               // pilih algoritma
                if(algo.equals("KMP")) {
                    dict = new Dictionary(Dictionary.KNUTH_MORRIS_PRATT);
                } else {
                    dict = new Dictionary(Dictionary.BOOYER_MOORE);
                }
+               //baca file teks
                dict.readSynonymFromFile("data/synonym.txt");
                dict.readFAQFromFile("data/FAQ.txt");
                dict.readStopwordsFromFile("data/stopwords.txt");
+
+               //bila sudah ditanyakan sebelumnya
                if(temp.contains(chat)) {
                    return s.concat(dict.justAnswer(chat));
                }
+
+               //cari jawaban
                ArrayList<String> answer = dict.answer(chat);
-               ArrayList<Integer> conf = dict.getConfidence();
                System.out.println(answer.size());
                if(answer.size() == 1) {
-                   return s.concat(answer.get(0) + " (" + conf.get(0).toString() + "%)\n");
+                   return s.concat(answer.get(0) + " (" + dict.getConfidence(0).toString() + "%)\n");
                }
                if(answer.isEmpty()) {
                    return s.concat("Kami tidak tahu apa yang ada tanyakan\n");
@@ -57,7 +62,7 @@ public class AIChatPro {
                s = s.concat("Apakah yang anda maksud?\n");
                for(int i = 0; i < answer.size(); i++) {
                    if(answer.get(i) != null) {
-                       s = s.concat(answer.get(i) + " (" + conf.get(i).toString() + "%)\n");
+                       s = s.concat(answer.get(i) + " (" + dict.getConfidence(i).toString() + "%)\n");
                    }
                }
                return s;
