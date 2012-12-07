@@ -38,9 +38,9 @@ public class AIChatPro {
                } else {
                    dict = new Dictionary(Dictionary.BOOYER_MOORE);
                }
-               dict.readSynonymFromFile("D:/synonym.txt");
-               dict.readFAQFromFile("D:/FAQ.txt");
-               dict.readStopwordsFromFile("D:/stopwords.txt");
+               dict.readSynonymFromFile("data/synonym.txt");
+               dict.readFAQFromFile("data/FAQ.txt");
+               dict.readStopwordsFromFile("data/stopwords.txt");
                if(temp.contains(chat)) {
                    return s.concat(dict.justAnswer(chat));
                }
