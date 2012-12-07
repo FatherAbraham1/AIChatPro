@@ -10,7 +10,7 @@
 #chatbox {
   background: #dfdfdf;
   border-radius: 10px;
-  height: 100px;
+  height: 90px;
   padding: 10px;
 }
 
@@ -43,18 +43,19 @@ h3#hello {
 
     <div class="row">
       <div class="span6 offset3">
-        <div id="chatbox">
-          <h3 id="hello"></h3>
-          <p style="text-align: center; display: none; margin: -12px 0 5px 0; font-size: 0.8em;">Using: Ajax + SparkFramework (Java) + Embedded-Jetty</p>
-
+        
+	  <h3 id="hello"></h3>
+	  <textarea style="background-color:#FFFFFF;" id="chat-content" rows="17" cols="160">AIChatPro: Halo, saya adalah mesin yang dibuat untuk dapat berbicara dengan anda</textarea>
+		<div id="chatbox">
           <form id="form" class="form-inline">
-            <input id="chat-input" type="text" placeholder="Ketik apapun..." />
-            <button type="submit" class="btn">Test</button>
+            <input id="chat-input" type="text" placeholder="Masukkan pertanyaan" /><button type="submit" class="btn">Send!</button><br>
+			Pilih algoritma:<br>
+			<input type="radio" name="algo" value="KMP" checked>Knuth-Morri-Pratt Algorithm</input><br>
+			<input type="radio" name="algo" value="BM">Booyer-Moore Algorithm</input><br>
           </form>
 
-          <div id="ajax-response" style="text-align: center; display: none;">
-            <span></span>
-          </div>
+          
+          
         </div>
       </div>
     </div>
@@ -73,10 +74,8 @@ setTimeout(function() {
 
 $('#form').submit(function(event) {
   event.preventDefault();
-  $('#ajax-response').css('display', 'none');
-  $.post('/chat', { chat: $('#chat-input').val() }, function(data) {
-    $('#ajax-response').fadeIn('fast');
-    $('#ajax-response > span').html(data);
+  $.post('/chat', { history: $('#chat-content').val(), algo: $('input[name=algo]:radio:checked').val(), chat: $('#chat-input').val() }, function(data) {
+    $('#chat-content').html(data);
   });
 })
 </script>
