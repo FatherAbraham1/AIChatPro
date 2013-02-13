@@ -46,7 +46,7 @@ public class AIChatPro {
 
                //bila sudah ditanyakan sebelumnya
                if(temp.contains(chat)) {
-                   return s.concat(dict.justAnswer(chat));
+                   return s.concat(dict.justAnswer(chat) + " (100%)\n");
                }
 
                //cari jawaban
